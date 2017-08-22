@@ -14,17 +14,25 @@ import me.lshare.vangogh.Vangogh;
 public class SelectAlbumActivity extends AppCompatActivity
     implements View.OnClickListener, AdapterView.OnItemClickListener {
 
+  private AlbumSelectAdapter albumSelectAdapter;
+
   @Override
   protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
     setContentView(R.layout.activity_select_album);
     findViewById(R.id.back_image_view).setOnClickListener(this);
     GridView gridView = (GridView) findViewById(R.id.grid_view);
-    AlbumSelectAdapter albumSelectAdapter = new AlbumSelectAdapter(this, Vangogh.albumList());
+    albumSelectAdapter = new AlbumSelectAdapter(this, Vangogh.albumList());
     albumSelectAdapter.setLayoutParams(getResources().getDisplayMetrics().widthPixels / 2);
     gridView.setAdapter(albumSelectAdapter);
     gridView.setNumColumns(2);
     gridView.setOnItemClickListener(this);
+  }
+
+  @Override
+  protected void onResume() {
+    super.onResume();
+    albumSelectAdapter.notifyDataSetChanged();
   }
 
   @Override

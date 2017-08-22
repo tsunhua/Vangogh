@@ -35,7 +35,7 @@ public class SelectImageActivity extends AppCompatActivity
     backImageView.setOnClickListener(this);
     doneImageView.setOnClickListener(this);
 
-    Album album = Vangogh.albumList().get(0);
+    Album album = Vangogh.selectedAlbum();
     titleTextView.setText(album == null ? "" : album.getName());
     imageList = Vangogh.imageList(album);
     GridView gridView = (GridView) findViewById(R.id.grid_view);
@@ -44,6 +44,12 @@ public class SelectImageActivity extends AppCompatActivity
     gridView.setAdapter(imageSelectAdapter);
     gridView.setNumColumns(3);
     gridView.setOnItemClickListener(this);
+  }
+
+  @Override
+  protected void onResume() {
+    super.onResume();
+    imageSelectAdapter.notifyDataSetChanged();
   }
 
   @Override
