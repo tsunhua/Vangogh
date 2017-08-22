@@ -24,7 +24,7 @@ public class MainActivity extends AppCompatActivity implements OnSelectResultCal
   }
 
   public void onClickInit(View view) {
-    Filter filter = new Filter.Builder().mimType(MimeType.JPEG).nameRegex("2017").build();
+    Filter filter = new Filter.Builder().mimType(MimeType.JPEG).nameRegex(".*wx_camera.*").build();
     Vangogh.create(filter, this).bind(this).init();
   }
 

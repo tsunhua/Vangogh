@@ -6,6 +6,7 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.GridView;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import me.lshare.vangogh.Image;

@@ -8,7 +8,6 @@ import android.os.Looper;
 import android.os.Message;
 import android.os.Process;
 import android.provider.MediaStore;
-import android.text.TextUtils;
 import android.util.Log;
 
 import java.io.File;
@@ -20,7 +19,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.regex.Pattern;
 
 public class Vangogh implements AlbumSelector, ImageSelector {
   private static final String TAG = Vangogh.class.getSimpleName();
@@ -29,10 +27,10 @@ public class Vangogh implements AlbumSelector, ImageSelector {
   private static List<Image> selectedImageList;
   private static Album selectedAlbum;
   private WeakReference<Activity> contextReference;
-  private static List<Album> allAlbum;
+  private static List<Album> tmpAlbumList;
   private static Map<Album, List<Image>> allImage;
   private Handler handler;
-  private static final int MSG_ALBUM_LIST_DATA = 1;
+
   private static final int MSG_IMAGE_LIST_DATA = 2;
 
   private final String[] albumProjection = new String[] {
@@ -46,7 +44,7 @@ public class Vangogh implements AlbumSelector, ImageSelector {
   };
 
   static {
-    allAlbum = new ArrayList<>();
+    tmpAlbumList = new ArrayList<>();
     allImage = new HashMap<>();
     selectedAlbum = null;
     selectedImageList = new ArrayList<>();
@@ -68,9 +66,6 @@ public class Vangogh implements AlbumSelector, ImageSelector {
       public void handleMessage(Message msg) {
         super.handleMessage(msg);
         switch (msg.what) {
-          case MSG_ALBUM_LIST_DATA:
-            Log.d(TAG, "album list data loaded: " + allAlbum.toString());
-            break;
           case MSG_IMAGE_LIST_DATA:
             Log.d(TAG, "image list data loaded: " + allImage.size());
             Set<Album> alba = allImage.keySet();
@@ -153,12 +148,11 @@ public class Vangogh implements AlbumSelector, ImageSelector {
           } while (cursor.moveToPrevious());
         }
         cursor.close();
-        allAlbum.clear();
-        allAlbum.addAll(temp);
-        handler.sendEmptyMessage(MSG_ALBUM_LIST_DATA);
+        tmpAlbumList.clear();
+        tmpAlbumList.addAll(temp);
 
-        countDown = allAlbum.size();
-        for (Album album : allAlbum) {
+        countDown = tmpAlbumList.size();
+        for (Album album : tmpAlbumList) {
           loadImageList(album);
         }
       }
@@ -186,7 +180,6 @@ public class Vangogh implements AlbumSelector, ImageSelector {
         //        }
         //      }
         //    }
-
 
         Cursor cursor = contextReference.get()
                                         .getContentResolver()
@@ -220,13 +213,13 @@ public class Vangogh implements AlbumSelector, ImageSelector {
             // filter name
             String name = cursor.getString(cursor.getColumnIndex(imgProjection[1]));
             if (!filter.filterName(name)) {
-              return;
+              continue;
             }
 
             // filter size
             long size = cursor.getLong(cursor.getColumnIndex(imgProjection[3]));
             if (!filter.filterSize(size)) {
-              return;
+              continue;
             }
 
             //        boolean isSelected = selectedImages.contains(id);
@@ -242,7 +235,9 @@ public class Vangogh implements AlbumSelector, ImageSelector {
         }
         cursor.close();
 
-        allImage.put(album, temp);
+        if (!temp.isEmpty()) {
+          allImage.put(album, temp);
+        }
         synchronized (Vangogh.class) {
           countDown--;
           if (countDown == 0) {
@@ -263,7 +258,8 @@ public class Vangogh implements AlbumSelector, ImageSelector {
   }
 
   public static List<Image> imageList(Album album) {
-    return allImage.get(album);
+    List<Image> imageList = allImage.get(album);
+    return imageList == null ? new ArrayList<Image>() : imageList;
   }
 
   public static List<Image> selectedImageList() {
@@ -275,7 +271,7 @@ public class Vangogh implements AlbumSelector, ImageSelector {
   }
 
   public static List<Album> albumList() {
-    return allAlbum;
+    return new ArrayList<>(allImage.keySet());
   }
 
   public static Vangogh create(Filter filter, OnSelectResultCallback callback) {

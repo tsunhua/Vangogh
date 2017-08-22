@@ -46,19 +46,11 @@ public class Filter {
   }
 
   public boolean filterSize(long size) {
-    return maxSize != 0 && size >= minSize && size <= maxSize;
+    if (maxSize == 0) {
+      return true;
+    }
+    return size >= minSize && size <= maxSize;
   }
-
-  //  public Map<Album, List<Image>> filter(Map<Album, List<Image>> source) {
-  //    Map<Album, List<Image>> result = new HashMap<>();
-  //    for (Album album : source.keySet()) {
-  //      List<Image> imageList = source.get(album);
-  //      for (Image image : imageList) {
-  //
-  //      }
-  //    }
-  //    return result;
-  //  }
 
   public static class Builder {
     private Set<MimeType> mimeTypeSet;

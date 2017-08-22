@@ -1,2 +1,2 @@
 <?xml version="1.0" encoding="utf-8"?>
-<merger version="3"><dataSet config="main"><source path="/home/lshare/git/android/share/VanGogh/vangogh/src/main/assets"/><source path="/home/lshare/git/android/share/VanGogh/vangogh/build/generated/assets/shaders/release"/></dataSet><dataSet config="release"><source path="/home/lshare/git/android/share/VanGogh/vangogh/src/release/assets"/></dataSet></merger>
+<merger version="3"><dataSet config="main"><source path="D:\Android\publishProject\Vangogh\vangogh\src\main\assets"/><source path="D:\Android\publishProject\Vangogh\vangogh\build\generated\assets\shaders\release"/></dataSet><dataSet config="release"><source path="D:\Android\publishProject\Vangogh\vangogh\src\release\assets"/></dataSet></merger>
