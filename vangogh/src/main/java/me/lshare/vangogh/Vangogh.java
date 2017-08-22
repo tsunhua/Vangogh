@@ -23,7 +23,6 @@ import java.util.Set;
 public class Vangogh implements AlbumSelector, ImageSelector {
   private static final String TAG = Vangogh.class.getSimpleName();
   private Filter filter;
-  private OnSelectResultCallback callback;
   private static List<Image> selectedImageList;
   private static Album selectedAlbum;
   private WeakReference<Activity> contextReference;
@@ -40,7 +39,7 @@ public class Vangogh implements AlbumSelector, ImageSelector {
 
   private final String[] imgProjection = new String[] {
       MediaStore.Images.Media._ID, MediaStore.Images.Media.DISPLAY_NAME,
-      MediaStore.Images.Media.DATA, MediaStore.Images.Media.SIZE
+      MediaStore.Images.Media.SIZE, MediaStore.Images.Media.DATA
   };
 
   static {
@@ -62,9 +61,8 @@ public class Vangogh implements AlbumSelector, ImageSelector {
     return this;
   }
 
-  private Vangogh(Filter filter, OnSelectResultCallback callback) {
+  private Vangogh(Filter filter) {
     this.filter = filter;
-    this.callback = callback;
     this.handler = new Handler(Looper.getMainLooper()) {
       @Override
       public void handleMessage(Message msg) {
@@ -196,7 +194,6 @@ public class Vangogh implements AlbumSelector, ImageSelector {
             }
 
             long id = cursor.getLong(cursor.getColumnIndex(imgProjection[0]));
-            String path = cursor.getString(cursor.getColumnIndex(imgProjection[2]));
 
             // filter name
             String name = cursor.getString(cursor.getColumnIndex(imgProjection[1]));
@@ -205,11 +202,12 @@ public class Vangogh implements AlbumSelector, ImageSelector {
             }
 
             // filter size
-            long size = cursor.getLong(cursor.getColumnIndex(imgProjection[3]));
+            long size = cursor.getLong(cursor.getColumnIndex(imgProjection[2]));
             if (!filter.filterSize(size)) {
               continue;
             }
 
+            String path = cursor.getString(cursor.getColumnIndex(imgProjection[3]));
             file = new File(path);
             if (file.exists()) {
               temp.add(new Image(id, name, path));
@@ -258,8 +256,8 @@ public class Vangogh implements AlbumSelector, ImageSelector {
     return new ArrayList<>(allImage.keySet());
   }
 
-  public static Vangogh create(Filter filter, OnSelectResultCallback callback) {
-    instance = new Vangogh(filter, callback);
+  public static Vangogh create(Filter filter) {
+    instance = new Vangogh(filter);
     return instance;
   }
 
@@ -271,15 +269,6 @@ public class Vangogh implements AlbumSelector, ImageSelector {
   @Override
   public void deselect(Album album) {
     selectedAlbum = null;
-  }
-
-  @Override
-  public void toggleSelect(Album album) {
-    if (selectedAlbum == album) {
-      deselect(album);
-    } else {
-      select(album);
-    }
   }
 
   @Override

@@ -46,10 +46,7 @@ public class Filter {
   }
 
   public boolean filterSize(long size) {
-    if (maxSize == 0) {
-      return true;
-    }
-    return size >= minSize && size <= maxSize;
+    return maxSize == 0 || size >= minSize && size <= maxSize;
   }
 
   public static class Builder {

@@ -6,17 +6,11 @@ import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
 
-import java.util.List;
-
-import me.lshare.vangogh.Album;
 import me.lshare.vangogh.Filter;
-import me.lshare.vangogh.Image;
 import me.lshare.vangogh.MimeType;
-import me.lshare.vangogh.OnSelectResultCallback;
 import me.lshare.vangogh.Vangogh;
 
-public class MainActivity extends AppCompatActivity implements OnSelectResultCallback {
-
+public class MainActivity extends AppCompatActivity {
 
   private static final String TAG = MainActivity.class.getSimpleName();
 
@@ -29,15 +23,11 @@ public class MainActivity extends AppCompatActivity implements OnSelectResultCal
   public void onClickInit(View view) {
     Filter filter =
         new Filter.Builder().mimType(MimeType.JPEG)/*.nameRegex(".*wx_camera.*")*/.build();
-    Vangogh.create(filter, this).bind(this).init();
+    Vangogh.create(filter).bind(this).init();
   }
 
   public void onClickSelectImage(View view) {
     startActivityForResult(new Intent(this, SelectAlbumActivity.class), 0);
-  }
-
-  @Override
-  public void onSelectResult(Album album, List<Image> imageList) {
   }
 
   @Override
