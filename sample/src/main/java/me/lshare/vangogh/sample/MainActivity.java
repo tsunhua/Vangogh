@@ -27,17 +27,17 @@ public class MainActivity extends AppCompatActivity implements OnSelectResultCal
   }
 
   public void onClickInit(View view) {
-    Filter filter = new Filter.Builder().mimType(MimeType.JPEG).nameRegex(".*wx_camera.*").build();
+    Filter filter =
+        new Filter.Builder().mimType(MimeType.JPEG)/*.nameRegex(".*wx_camera.*")*/.build();
     Vangogh.create(filter, this).bind(this).init();
   }
 
   public void onClickSelectImage(View view) {
-    startActivityForResult(new Intent(this, SelectImageActivity.class), 0);
+    startActivityForResult(new Intent(this, SelectAlbumActivity.class), 0);
   }
 
   @Override
   public void onSelectResult(Album album, List<Image> imageList) {
-
   }
 
   @Override

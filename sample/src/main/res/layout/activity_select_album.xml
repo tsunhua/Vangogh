@@ -24,18 +24,9 @@
       android:layout_centerVertical="true"
       android:layout_marginLeft="10dp"
       android:layout_toRightOf="@id/back_image_view"
-      android:text="xxx"
+      android:text="选择图片"
       android:textColor="@color/multiple_image_select_toolbarPrimaryText"
       android:textSize="18sp"/>
-
-    <ImageView
-      android:id="@+id/done_image_view"
-      android:layout_width="48dp"
-      android:layout_height="48dp"
-      android:layout_alignParentRight="true"
-      android:layout_centerVertical="true"
-      android:padding="10dp"
-      android:src="@drawable/ic_done_white"/>
 
   </RelativeLayout>
 
@@ -47,3 +38,4 @@
     android:stretchMode="columnWidth"/>
 
 </FrameLayout>
+
