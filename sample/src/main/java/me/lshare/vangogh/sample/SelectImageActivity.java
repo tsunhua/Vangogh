@@ -3,12 +3,17 @@ package me.lshare.vangogh.sample;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
+import android.view.Window;
+import android.view.WindowManager;
 import android.widget.AdapterView;
 import android.widget.GridView;
+import android.widget.ImageView;
+import android.widget.TextView;
 
 import java.util.ArrayList;
 import java.util.List;
 
+import me.lshare.vangogh.Album;
 import me.lshare.vangogh.Image;
 import me.lshare.vangogh.Vangogh;
 
@@ -16,12 +21,33 @@ public class SelectImageActivity extends AppCompatActivity {
 
   private static final String TAG = SelectImageActivity.class.getSimpleName();
   private List<Image> imageList;
+  private ImageView backImageView;
+  private ImageView doneImageView;
+  private TextView titleTextView;
 
   @Override
   protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
     setContentView(R.layout.activity_select_image);
-    imageList = Vangogh.imageList(Vangogh.albumList().get(0));
+    backImageView = (ImageView) findViewById(R.id.back_image_view);
+    doneImageView = (ImageView) findViewById(R.id.done_image_view);
+    titleTextView = (TextView) findViewById(R.id.title_text_view);
+    backImageView.setOnClickListener(new View.OnClickListener() {
+      @Override
+      public void onClick(View v) {
+        SelectImageActivity.this.finish();
+      }
+    });
+    doneImageView.setOnClickListener(new View.OnClickListener() {
+      @Override
+      public void onClick(View v) {
+        SelectImageActivity.this.setResult(RESULT_OK);
+        SelectImageActivity.this.finish();
+      }
+    });
+    Album album = Vangogh.albumList().get(0);
+    titleTextView.setText(album == null ? "" : album.getName());
+    imageList = Vangogh.imageList(album);
     GridView gridView = (GridView) findViewById(R.id.grid_view);
     final ImageSelectAdapter imageSelectAdapter = new ImageSelectAdapter(this, imageList);
     imageSelectAdapter.setLayoutParams(getResources().getDisplayMetrics().widthPixels / 3);

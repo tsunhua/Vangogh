@@ -51,7 +51,6 @@ public class ImageSelectAdapter extends GenericAdapter<Image> {
       viewHolder.view.setAlpha(0.0f);
       ((FrameLayout) convertView).setForeground(null);
     }
-    Log.e("xxx", arrayList.get(position).getPath());
     Picasso.with(context)
            .load(new File(arrayList.get(position).getPath()))
            .placeholder(R.drawable.image_placeholder)

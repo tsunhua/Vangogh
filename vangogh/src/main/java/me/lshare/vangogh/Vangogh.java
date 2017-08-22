@@ -46,6 +46,10 @@ public class Vangogh implements AlbumSelector, ImageSelector {
   static {
     tmpAlbumList = new ArrayList<>();
     allImage = new HashMap<>();
+    selectNone();
+  }
+
+  public static void selectNone() {
     selectedAlbum = null;
     selectedImageList = new ArrayList<>();
   }
@@ -72,6 +76,9 @@ public class Vangogh implements AlbumSelector, ImageSelector {
             for (Album album : alba) {
               Log.d(TAG, "" + allImage.get(album).toString());
             }
+            if (alba.size() == 1) {
+              selectedAlbum = alba.iterator().next();
+            }
             break;
           default:
             break;
@@ -82,7 +89,7 @@ public class Vangogh implements AlbumSelector, ImageSelector {
     where = new StringBuilder();
     int i = 0;
     for (MimeType mimType : filter.getMimeTypeSet()) {
-      where.append(MediaStore.Images.Media.MIME_TYPE + "=").append("'" + mimType + "'");
+      where.append(MediaStore.Images.Media.MIME_TYPE + "=").append("'").append(mimType).append("'");
       if (i != filter.getMimeTypeSet().size() - 1) {
         where.append(" OR ");
       }
@@ -167,20 +174,7 @@ public class Vangogh implements AlbumSelector, ImageSelector {
       public void run() {
         Process.setThreadPriority(Process.THREAD_PRIORITY_BACKGROUND);
         super.run();
-        //    List<Image> images = new ArrayList<>();
         File file;
-        //    HashSet<Long> selectedImages = new HashSet<>();
-        //    if (images != null) {
-        //      Image image;
-        //      for (int i = 0, l = images.size(); i < l; i++) {
-        //        image = images.get(i);
-        //        file = new File(image.getPath());
-        //        if (file.exists() &&  ) {
-        //          selectedImages.add(image.getId());
-        //        }
-        //      }
-        //    }
-
         Cursor cursor = contextReference.get()
                                         .getContentResolver()
                                         .query(uri,
@@ -193,13 +187,7 @@ public class Vangogh implements AlbumSelector, ImageSelector {
           // error
           return;
         }
-    /*
-    In case this runnable is executed to onChange calling loadImages,
-    using countSelected variable can result in a race condition. To avoid that,
-    tempCountSelected keeps track of number of selected images. On handling
-    FETCH_COMPLETED message, countSelected is assigned value of tempCountSelected.
-     */
-        //        int tempCountSelected = 0;
+
         ArrayList<Image> temp = new ArrayList<>();
         if (cursor.moveToLast()) {
           do {
@@ -222,10 +210,6 @@ public class Vangogh implements AlbumSelector, ImageSelector {
               continue;
             }
 
-            //        boolean isSelected = selectedImages.contains(id);
-            //        if (isSelected) {
-            //          tempCountSelected++;
-            //        }
             file = new File(path);
             if (file.exists()) {
               temp.add(new Image(id, name, path));

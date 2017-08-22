@@ -1,13 +1,49 @@
 <?xml version="1.0" encoding="utf-8"?>
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
-             android:layout_width="match_parent"
-             android:layout_height="match_parent"
+  android:layout_width="match_parent"
+  android:layout_height="match_parent"
   >
+
+  <RelativeLayout
+    android:layout_width="match_parent"
+    android:layout_height="56dp"
+    android:background="@color/colorPrimary">
+
+    <ImageView
+      android:id="@+id/back_image_view"
+      android:layout_width="48dp"
+      android:layout_height="48dp"
+      android:layout_centerVertical="true"
+      android:padding="10dp"
+      android:src="@drawable/ic_arrow_back"/>
+
+    <TextView
+      android:id="@+id/title_text_view"
+      android:layout_width="wrap_content"
+      android:layout_height="wrap_content"
+      android:layout_centerVertical="true"
+      android:layout_marginLeft="10dp"
+      android:layout_toRightOf="@id/back_image_view"
+      android:text="xxx"
+      android:textColor="@android:color/white"
+      android:textSize="18sp"/>
+
+    <ImageView
+      android:id="@+id/done_image_view"
+      android:layout_width="48dp"
+      android:layout_height="48dp"
+      android:layout_alignParentRight="true"
+      android:layout_centerVertical="true"
+      android:padding="10dp"
+      android:src="@drawable/ic_done_white"/>
+
+  </RelativeLayout>
 
   <GridView
     android:id="@+id/grid_view"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:layout_marginTop="56dp"
     android:stretchMode="columnWidth"/>
 
 </FrameLayout>
