@@ -106,6 +106,9 @@ public class Vangogh implements AlbumSelector, ImageSelector {
   }
 
   public void init() {
+    allImage.clear();
+    tmpAlbumList.clear();
+    selectNone();
     new Thread() {
       @Override
       public void run() {
