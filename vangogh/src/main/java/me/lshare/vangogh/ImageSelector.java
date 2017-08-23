@@ -1,13 +1,9 @@
 package me.lshare.vangogh;
 
 public interface ImageSelector {
-  void select(Image... images);
+  void toggleSelect(Album album, Image image);
 
-  void deselect(Image... images);
+  void selectAll(Album album);
 
-  void toggleSelect(Image image);
-
-  void selectAll();
-
-  void deselectAll();
+  void deselectAll(Album album);
 }

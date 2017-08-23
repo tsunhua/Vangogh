@@ -20,17 +20,15 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-public class Vangogh implements AlbumSelector, ImageSelector {
+public class Vangogh implements ImageSelector {
   private static final String TAG = Vangogh.class.getSimpleName();
   private Filter filter;
-  private static List<Image> selectedImageList;
-  private static Album selectedAlbum;
   private WeakReference<Activity> contextReference;
   private static List<Album> tmpAlbumList;
   private static Map<Album, List<Image>> allImage;
   private Handler handler;
 
-  private static final int MSG_IMAGE_LIST_DATA = 2;
+  private static final int MSG_IMAGE_LIST_DATA = 10001;
 
   private final String[] albumProjection = new String[] {
       MediaStore.Images.Media.BUCKET_ID, MediaStore.Images.Media.BUCKET_DISPLAY_NAME,
@@ -49,8 +47,13 @@ public class Vangogh implements AlbumSelector, ImageSelector {
   }
 
   public static void selectNone() {
-    selectedAlbum = null;
-    selectedImageList = new ArrayList<>();
+    Set<Album> albumSet = allImage.keySet();
+    for (Album album : albumSet) {
+      album.setSelected(false);
+      for (Image image : allImage.get(album)) {
+        image.setSelected(false);
+      }
+    }
   }
 
   private Uri uri;
@@ -73,9 +76,6 @@ public class Vangogh implements AlbumSelector, ImageSelector {
             Set<Album> alba = allImage.keySet();
             for (Album album : alba) {
               Log.d(TAG, "" + allImage.get(album).toString());
-            }
-            if (alba.size() == 1) {
-              selectedAlbum = alba.iterator().next();
             }
             break;
           default:
@@ -100,9 +100,6 @@ public class Vangogh implements AlbumSelector, ImageSelector {
     } else {
       uri = MediaStore.Images.Media.EXTERNAL_CONTENT_URI;
     }
-  }
-
-  public void start() {
   }
 
   public void init() {
@@ -233,9 +230,6 @@ public class Vangogh implements AlbumSelector, ImageSelector {
     }.start();
   }
 
-  private Vangogh() {
-  }
-
   private static Vangogh instance;
 
   public static Vangogh getInstance() {
@@ -247,12 +241,23 @@ public class Vangogh implements AlbumSelector, ImageSelector {
     return imageList == null ? new ArrayList<Image>() : imageList;
   }
 
-  public static List<Image> selectedImageList() {
-    return selectedImageList;
-  }
-
-  public static Album selectedAlbum() {
-    return selectedAlbum;
+  public static Map<Album, List<Image>> selectedImageMap() {
+    Map<Album, List<Image>> result = new HashMap<>();
+    Set<Album> albumSet = allImage.keySet();
+    for (Album album : albumSet) {
+      if (album.isSelected()) {
+        List<Image> imageList = new ArrayList<>();
+        for (Image image : allImage.get(album)) {
+          if (image.isSelected()) {
+            imageList.add(image);
+          }
+        }
+        if (!imageList.isEmpty()) {
+          result.put(album, imageList);
+        }
+      }
+    }
+    return result;
   }
 
   public static List<Album> albumList() {
@@ -265,42 +270,39 @@ public class Vangogh implements AlbumSelector, ImageSelector {
   }
 
   @Override
-  public void select(Album album) {
-    selectedAlbum = album;
-  }
-
-  @Override
-  public void deselect(Album album) {
-    selectedAlbum = null;
-  }
-
-  @Override
-  public void select(Image... images) {
-    selectedImageList.addAll(Arrays.asList(images));
-  }
-
-  @Override
-  public void deselect(Image... images) {
-    selectedImageList.removeAll(Arrays.asList(images));
-  }
-
-  @Override
-  public void toggleSelect(Image image) {
-    if (selectedImageList.contains(image)) {
-      deselect(image);
+  public void toggleSelect(Album album, Image image) {
+    // TODO: 17-8-23 add select limit
+    image.setSelected(!image.isSelected());
+    if (image.isSelected()) {
+      album.setSelected(true);
     } else {
-      select(image);
+      List<Image> imageList = allImage.get(album);
+      int i = 0;
+      for (; i < imageList.size(); i++) {
+        if (imageList.get(i).isSelected()) {
+          album.setSelected(true);
+          break;
+        }
+      }
+      if (i == imageList.size()) {
+        album.setSelected(false);
+      }
     }
   }
 
   @Override
-  public void selectAll() {
-    selectedImageList.clear();
-    selectedImageList.addAll(allImage.get(selectedAlbum));
+  public void selectAll(Album album) {
+    album.setSelected(true);
+    for (Image img : allImage.get(album)) {
+      img.setSelected(true);
+    }
   }
 
   @Override
-  public void deselectAll() {
-    selectedImageList.clear();
+  public void deselectAll(Album album) {
+    album.setSelected(false);
+    for (Image img : allImage.get(album)) {
+      img.setSelected(false);
+    }
   }
 }

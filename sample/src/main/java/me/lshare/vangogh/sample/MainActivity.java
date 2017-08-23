@@ -71,10 +71,7 @@ public class MainActivity extends AppCompatActivity {
     super.onActivityResult(requestCode, resultCode, data);
     switch (resultCode) {
       case RESULT_OK:
-        Log.d(TAG,
-              "selected album: " +
-              (Vangogh.selectedAlbum() == null ? "null" : Vangogh.selectedAlbum().getName()));
-        Log.d(TAG, "selected images: " + Vangogh.selectedImageList().toString());
+//        Log.d(TAG, "selected images: " + Vangogh.selectedImageList().toString());
         break;
       case RESULT_CANCELED:
         break;

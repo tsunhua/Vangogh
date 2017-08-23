@@ -42,17 +42,17 @@ public class ImageSelectAdapter extends GenericAdapter<Image> {
     viewHolder.view.getLayoutParams().width = size;
     viewHolder.view.getLayoutParams().height = size;
 
-    if (Vangogh.selectedImageList().contains(arrayList.get(position))) {
+    Image image = arrayList.get(position);
+    if (image.isSelected()) {
       viewHolder.view.setAlpha(0.5f);
       ((FrameLayout) convertView).setForeground(context.getResources()
                                                        .getDrawable(R.drawable.ic_done_white));
-
     } else {
       viewHolder.view.setAlpha(0.0f);
       ((FrameLayout) convertView).setForeground(null);
     }
     Picasso.with(context)
-           .load(new File(arrayList.get(position).getPath()))
+           .load(new File(image.getPath()))
            .placeholder(R.drawable.image_placeholder)
            .resize(200, 200)
            .centerCrop()

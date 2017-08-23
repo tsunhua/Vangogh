@@ -20,9 +20,11 @@ import me.lshare.vangogh.Vangogh;
 public class SelectImageActivity extends AppCompatActivity
     implements View.OnClickListener, AdapterView.OnItemClickListener {
 
+  public static final String EXTRA_ALBUM = "extra_album";
   private static final String TAG = SelectImageActivity.class.getSimpleName();
   private List<Image> imageList;
   private ImageSelectAdapter imageSelectAdapter;
+  private Album album;
 
   @Override
   protected void onCreate(Bundle savedInstanceState) {
@@ -35,7 +37,7 @@ public class SelectImageActivity extends AppCompatActivity
     backImageView.setOnClickListener(this);
     doneImageView.setOnClickListener(this);
 
-    Album album = Vangogh.selectedAlbum();
+    album = (Album) getIntent().getSerializableExtra(EXTRA_ALBUM);
     titleTextView.setText(album == null ? "" : album.getName());
     imageList = Vangogh.imageList(album);
     GridView gridView = (GridView) findViewById(R.id.grid_view);
@@ -69,7 +71,7 @@ public class SelectImageActivity extends AppCompatActivity
   @Override
   public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
     Image image = imageList.get(position);
-    Vangogh.getInstance().toggleSelect(image);
+    Vangogh.getInstance().toggleSelect(album, image);
     imageSelectAdapter.notifyDataSetChanged();
   }
 }

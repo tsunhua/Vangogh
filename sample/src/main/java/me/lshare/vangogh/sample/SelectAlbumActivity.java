@@ -53,8 +53,9 @@ public class SelectAlbumActivity extends AppCompatActivity
   @Override
   public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
     Album album = Vangogh.albumList().get(position);
-    Vangogh.getInstance().select(album);
-    startActivityForResult(new Intent(this, SelectImageActivity.class), 0);
+    Intent intent = new Intent(this, SelectImageActivity.class);
+    intent.putExtra(SelectImageActivity.EXTRA_ALBUM, album);
+    startActivityForResult(intent, 0);
   }
 
   @Override

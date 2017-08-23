@@ -1,9 +1,12 @@
 package me.lshare.vangogh;
 
-public class Image {
+import java.io.Serializable;
+
+public class Image implements Serializable {
   private long id;
   private String name;
   private String path;
+  private boolean isSelected;
 
   public Image(long id, String name, String path) {
     this.id = id;
@@ -21,5 +24,13 @@ public class Image {
 
   public String getPath() {
     return path;
+  }
+
+  public boolean isSelected() {
+    return isSelected;
+  }
+
+  public void setSelected(boolean selected) {
+    isSelected = selected;
   }
 }

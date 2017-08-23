@@ -11,8 +11,11 @@ import com.squareup.picasso.Picasso;
 
 import java.io.File;
 import java.util.List;
+import java.util.Map;
 
 import me.lshare.vangogh.Album;
+import me.lshare.vangogh.Image;
+import me.lshare.vangogh.Vangogh;
 
 public class AlbumSelectAdapter extends GenericAdapter<Album> {
   public AlbumSelectAdapter(Context context, List<Album> albums) {
@@ -37,9 +40,15 @@ public class AlbumSelectAdapter extends GenericAdapter<Album> {
     viewHolder.imageView.getLayoutParams().width = size;
     viewHolder.imageView.getLayoutParams().height = size;
 
-    viewHolder.textView.setText(arrayList.get(position).getName());
+    Album album = arrayList.get(position);
+    if (album.isSelected()) {
+      viewHolder.textView.setText(
+          album.getName() + "(" + Vangogh.selectedImageMap().get(album).size() + ")");
+    } else {
+      viewHolder.textView.setText(album.getName());
+    }
     Picasso.with(context)
-           .load(Uri.fromFile(new File(arrayList.get(position).getCover())))
+           .load(Uri.fromFile(new File(album.getCover())))
            .placeholder(R.drawable.image_placeholder)
            .resize(200, 200)
            .centerCrop()
