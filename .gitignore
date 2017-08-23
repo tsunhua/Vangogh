@@ -15,6 +15,8 @@
 bin/
 gen/
 build/
+vangogh/build/
+sample/build/
 
 # Gradle files
 .gradle/
