@@ -56,6 +56,7 @@ public class SelectImageActivity extends AppCompatActivity
   public void onClick(View v) {
     switch (v.getId()) {
       case R.id.back_image_view:
+        setResult(RESULT_CANCELED);
         this.finish();
         break;
       case R.id.done_image_view:

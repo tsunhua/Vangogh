@@ -1,14 +1,13 @@
 package me.lshare.vangogh.sample;
 
 import android.content.Intent;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.GridView;
 
 import me.lshare.vangogh.Album;
-import me.lshare.vangogh.Image;
 import me.lshare.vangogh.Vangogh;
 
 public class SelectAlbumActivity extends AppCompatActivity
@@ -39,9 +38,16 @@ public class SelectAlbumActivity extends AppCompatActivity
   public void onClick(View v) {
     switch (v.getId()) {
       case R.id.back_image_view:
+        setResult(RESULT_CANCELED);
         this.finish();
         break;
     }
+  }
+
+  @Override
+  public void onBackPressed() {
+    setResult(RESULT_CANCELED);
+    super.onBackPressed();
   }
 
   @Override
@@ -55,7 +61,7 @@ public class SelectAlbumActivity extends AppCompatActivity
   protected void onActivityResult(int requestCode, int resultCode, Intent data) {
     super.onActivityResult(requestCode, resultCode, data);
     if (resultCode == RESULT_OK) {
-      setResult(RESULT_OK);
+      setResult(resultCode);
       this.finish();
     }
   }

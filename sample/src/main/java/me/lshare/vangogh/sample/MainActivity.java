@@ -69,12 +69,16 @@ public class MainActivity extends AppCompatActivity {
   @Override
   protected void onActivityResult(int requestCode, int resultCode, Intent data) {
     super.onActivityResult(requestCode, resultCode, data);
-    if (resultCode == RESULT_OK) {
-      Log.d(TAG,
-            "selected album: " +
-            (Vangogh.selectedAlbum() == null ? "null" : Vangogh.selectedAlbum().getName()));
-      Log.d(TAG, "selected images: " + Vangogh.selectedImageList().toString());
-      Vangogh.selectNone();
+    switch (resultCode) {
+      case RESULT_OK:
+        Log.d(TAG,
+              "selected album: " +
+              (Vangogh.selectedAlbum() == null ? "null" : Vangogh.selectedAlbum().getName()));
+        Log.d(TAG, "selected images: " + Vangogh.selectedImageList().toString());
+        break;
+      case RESULT_CANCELED:
+        break;
     }
+    Vangogh.selectNone();
   }
 }
