@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<items version="2" >
+
+    <item
+        is-multidex="true"
+        jar="/home/lshare/git/android/share/VanGogh/sample/build/intermediates/incremental-runtime-classes/debug/instant-run.jar"
+        jumboMode="true"
+        optimize="true"
+        revision="26.0.1"
+        sha1="caff8e51a24901cfc9cd7e1cf83d84f4cb0c103b">
+        <dex dex="/home/lshare/git/android/share/VanGogh/sample/build/intermediates/transforms/dex/debug/folders/1000/10000/instant-run_378827c6e36221ccbd3b820d1690b033a7bc4fd0/classes.dex" />
+    </item>
+    <item
+        is-multidex="true"
+        jar="/home/lshare/git/android/share/VanGogh/sample/build/intermediates/incremental-classes/debug/instant-run-bootstrap.jar"
+        jumboMode="true"
+        optimize="true"
+        revision="26.0.1"
+        sha1="2dba09d51c54df7b09592362ab46273bf54c8567">
+        <dex dex="/home/lshare/git/android/share/VanGogh/sample/build/intermediates/transforms/dex/debug/folders/1000/10000/instant-run-bootstrap_a745930eabfe81b8cacdfda8bdfe87f82f56e6cd/classes.dex" />
+    </item>
+
+</items>
