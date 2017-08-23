@@ -46,6 +46,15 @@ public class Vangogh implements ImageSelector {
     selectNone();
   }
 
+  private static Album getAlbum(long id) {
+    for (Album album : allImage.keySet()) {
+      if (album.getId() == id) {
+        return album;
+      }
+    }
+    return null;
+  }
+
   public static void selectNone() {
     Set<Album> albumSet = allImage.keySet();
     for (Album album : albumSet) {
@@ -270,8 +279,9 @@ public class Vangogh implements ImageSelector {
   }
 
   @Override
-  public void toggleSelect(Album album, Image image) {
+  public void toggleSelect(Album alba, Image image) {
     // TODO: 17-8-23 add select limit
+    Album album = getAlbum(alba.getId());
     image.setSelected(!image.isSelected());
     if (image.isSelected()) {
       album.setSelected(true);
