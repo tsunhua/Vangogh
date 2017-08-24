@@ -18,3 +18,7 @@ Vangogh是一款Android平台上的简易的图片选择器，只关注图片选
 
 ## 福利
 Sample包提供了额外的View实现和动态权限申请。
+
+## 致谢
+1. [darsh2/MultipleImageSelect](https://github.com/darsh2/MultipleImageSelect) 
+2. [zhihu/Matisse](https://github.com/zhihu/Matisse)

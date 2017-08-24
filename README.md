@@ -19,3 +19,7 @@ A Simple Image Selector for Android, just do the image-selection job. You can do
 
 ## Fuli
 In Sample Project, I provide the extra activity and adapter implementation. 
+
+## Thanks
+1. [darsh2/MultipleImageSelect](https://github.com/darsh2/MultipleImageSelect) 
+2. [zhihu/Matisse](https://github.com/zhihu/Matisse)
