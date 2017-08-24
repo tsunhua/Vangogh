@@ -58,7 +58,7 @@ public class MainActivity extends AppCompatActivity {
 
   private void initVangogh() {
     Filter filter =
-        new Filter.Builder().mimType(MimeType.JPEG)/*.nameRegex(".*wx_camera.*")*/.build();
+        new Filter.Builder().mimType(MimeType.JPEG)/*.nameRegex(".*wx_camera.*")*/.limit(3).build();
     Vangogh.create(filter).bind(this).init();
   }
 
@@ -71,9 +71,10 @@ public class MainActivity extends AppCompatActivity {
     super.onActivityResult(requestCode, resultCode, data);
     switch (resultCode) {
       case RESULT_OK:
-//        Log.d(TAG, "selected images: " + Vangogh.selectedImageList().toString());
+        Log.i(TAG, "selected image count: " + Vangogh.selectedImageCount());
         break;
       case RESULT_CANCELED:
+        Log.i(TAG, "cancel select");
         break;
     }
     Vangogh.selectNone();

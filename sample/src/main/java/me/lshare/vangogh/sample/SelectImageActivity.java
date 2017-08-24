@@ -9,6 +9,7 @@ import android.widget.AdapterView;
 import android.widget.GridView;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -71,7 +72,12 @@ public class SelectImageActivity extends AppCompatActivity
   @Override
   public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
     Image image = imageList.get(position);
-    Vangogh.getInstance().toggleSelect(album, image);
-    imageSelectAdapter.notifyDataSetChanged();
+    boolean result = Vangogh.getInstance().toggleSelect(album, image);
+    if (result) {
+      imageSelectAdapter.notifyDataSetChanged();
+    } else {
+      Toast.makeText(this, "最多只能选择" + Vangogh.selectedImageCount() + "张", Toast.LENGTH_SHORT)
+           .show();
+    }
   }
 }

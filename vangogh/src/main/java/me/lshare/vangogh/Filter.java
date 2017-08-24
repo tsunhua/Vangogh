@@ -16,17 +16,20 @@ public class Filter {
   private String path;
   private long minSize;
   private long maxSize;
+  private int limit;
 
   private Filter(Set<MimeType> mimeTypeSet,
                  String nameRegex,
                  String path,
                  long minSize,
-                 long maxSize) {
+                 long maxSize,
+                 int limit) {
     this.mimeTypeSet = mimeTypeSet;
     this.nameRegex = nameRegex;
     this.path = path;
     this.minSize = minSize;
     this.maxSize = maxSize;
+    this.limit = limit;
   }
 
   public Set<MimeType> getMimeTypeSet() {
@@ -49,12 +52,17 @@ public class Filter {
     return maxSize == 0 || size >= minSize && size <= maxSize;
   }
 
+  public int getLimit() {
+    return limit;
+  }
+
   public static class Builder {
     private Set<MimeType> mimeTypeSet;
     private String nameRegex;
     private String path;
     private long minSize;
     private long maxSize;
+    private int limit;
 
     public Builder mimType(MimeType... mimeTypes) {
       this.mimeTypeSet = new HashSet<>(Arrays.asList(mimeTypes));
@@ -84,8 +92,16 @@ public class Filter {
       return this;
     }
 
+    public Builder limit(int limit) {
+      if (limit <= 0) {
+        throw new IllegalArgumentException("limit should >=0");
+      }
+      this.limit = limit;
+      return this;
+    }
+
     public Filter build() {
-      return new Filter(mimeTypeSet, nameRegex, path, minSize, maxSize);
+      return new Filter(mimeTypeSet, nameRegex, path, minSize, maxSize, limit);
     }
   }
 }

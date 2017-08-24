@@ -13,7 +13,6 @@ import android.util.Log;
 import java.io.File;
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -25,7 +24,7 @@ public class Vangogh implements ImageSelector {
   private Filter filter;
   private WeakReference<Activity> contextReference;
   private static List<Album> tmpAlbumList;
-  private static Map<Album, List<Image>> allImage;
+  private static Map<Album, List<Image>> allImageMap;
   private Handler handler;
 
   private static final int MSG_IMAGE_LIST_DATA = 10001;
@@ -42,12 +41,12 @@ public class Vangogh implements ImageSelector {
 
   static {
     tmpAlbumList = new ArrayList<>();
-    allImage = new HashMap<>();
+    allImageMap = new HashMap<>();
     selectNone();
   }
 
   private static Album getAlbum(long id) {
-    for (Album album : allImage.keySet()) {
+    for (Album album : allImageMap.keySet()) {
       if (album.getId() == id) {
         return album;
       }
@@ -56,10 +55,10 @@ public class Vangogh implements ImageSelector {
   }
 
   public static void selectNone() {
-    Set<Album> albumSet = allImage.keySet();
+    Set<Album> albumSet = allImageMap.keySet();
     for (Album album : albumSet) {
       album.setSelected(false);
-      for (Image image : allImage.get(album)) {
+      for (Image image : allImageMap.get(album)) {
         image.setSelected(false);
       }
     }
@@ -81,10 +80,10 @@ public class Vangogh implements ImageSelector {
         super.handleMessage(msg);
         switch (msg.what) {
           case MSG_IMAGE_LIST_DATA:
-            Log.d(TAG, "image list data loaded: " + allImage.size());
-            Set<Album> alba = allImage.keySet();
+            Log.d(TAG, "image list data loaded: " + allImageMap.size());
+            Set<Album> alba = allImageMap.keySet();
             for (Album album : alba) {
-              Log.d(TAG, "" + allImage.get(album).toString());
+              Log.d(TAG, "" + allImageMap.get(album).toString());
             }
             break;
           default:
@@ -112,7 +111,7 @@ public class Vangogh implements ImageSelector {
   }
 
   public void init() {
-    allImage.clear();
+    allImageMap.clear();
     tmpAlbumList.clear();
     selectNone();
     new Thread() {
@@ -227,7 +226,7 @@ public class Vangogh implements ImageSelector {
         cursor.close();
 
         if (!temp.isEmpty()) {
-          allImage.put(album, temp);
+          allImageMap.put(album, temp);
         }
         synchronized (Vangogh.class) {
           countDown--;
@@ -246,17 +245,17 @@ public class Vangogh implements ImageSelector {
   }
 
   public static List<Image> imageList(Album album) {
-    List<Image> imageList = allImage.get(album);
+    List<Image> imageList = allImageMap.get(album);
     return imageList == null ? new ArrayList<Image>() : imageList;
   }
 
   public static Map<Album, List<Image>> selectedImageMap() {
     Map<Album, List<Image>> result = new HashMap<>();
-    Set<Album> albumSet = allImage.keySet();
+    Set<Album> albumSet = allImageMap.keySet();
     for (Album album : albumSet) {
       if (album.isSelected()) {
         List<Image> imageList = new ArrayList<>();
-        for (Image image : allImage.get(album)) {
+        for (Image image : allImageMap.get(album)) {
           if (image.isSelected()) {
             imageList.add(image);
           }
@@ -269,8 +268,23 @@ public class Vangogh implements ImageSelector {
     return result;
   }
 
+  public static int selectedImageCount() {
+    int count = 0;
+    Set<Album> albumSet = allImageMap.keySet();
+    for (Album album : albumSet) {
+      if (album.isSelected()) {
+        for (Image image : allImageMap.get(album)) {
+          if (image.isSelected()) {
+            count++;
+          }
+        }
+      }
+    }
+    return count;
+  }
+
   public static List<Album> albumList() {
-    return new ArrayList<>(allImage.keySet());
+    return new ArrayList<>(allImageMap.keySet());
   }
 
   public static Vangogh create(Filter filter) {
@@ -279,14 +293,20 @@ public class Vangogh implements ImageSelector {
   }
 
   @Override
-  public void toggleSelect(Album alba, Image image) {
+  public boolean toggleSelect(Album alba, Image image) {
     // TODO: 17-8-23 add select limit
     Album album = getAlbum(alba.getId());
+
+    // check count
+    if (!image.isSelected() && selectedImageCount() >= filter.getLimit()) {
+      return false;
+    }
+
     image.setSelected(!image.isSelected());
     if (image.isSelected()) {
       album.setSelected(true);
     } else {
-      List<Image> imageList = allImage.get(album);
+      List<Image> imageList = allImageMap.get(album);
       int i = 0;
       for (; i < imageList.size(); i++) {
         if (imageList.get(i).isSelected()) {
@@ -298,12 +318,13 @@ public class Vangogh implements ImageSelector {
         album.setSelected(false);
       }
     }
+    return true;
   }
 
   @Override
   public void selectAll(Album album) {
     album.setSelected(true);
-    for (Image img : allImage.get(album)) {
+    for (Image img : allImageMap.get(album)) {
       img.setSelected(true);
     }
   }
@@ -311,7 +332,7 @@ public class Vangogh implements ImageSelector {
   @Override
   public void deselectAll(Album album) {
     album.setSelected(false);
-    for (Image img : allImage.get(album)) {
+    for (Image img : allImageMap.get(album)) {
       img.setSelected(false);
     }
   }
