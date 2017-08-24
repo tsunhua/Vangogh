@@ -294,10 +294,8 @@ public class Vangogh implements ImageSelector {
 
   @Override
   public boolean toggleSelect(Album alba, Image image) {
-    // TODO: 17-8-23 add select limit
     Album album = getAlbum(alba.getId());
-
-    // check count
+    // check limit
     if (!image.isSelected() && selectedImageCount() >= filter.getLimit()) {
       return false;
     }
