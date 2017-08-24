@@ -75,10 +75,6 @@ public class Filter {
     }
 
     public Builder path(String path) {
-      File file = new File(path);
-      if (!file.exists()) {
-        throw new IllegalArgumentException("path not found!");
-      }
       this.path = path;
       return this;
     }

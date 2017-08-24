@@ -99,6 +99,7 @@ public class Vangogh implements ImageSelector {
            .append(MediaStore.Images.Media.DATA)
            .append(" like ")
            .append("'")
+           .append("%")
            .append(filter.getPath())
            .append("%")
            .append("'");
