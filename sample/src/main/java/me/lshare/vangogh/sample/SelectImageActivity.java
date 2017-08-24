@@ -26,6 +26,8 @@ public class SelectImageActivity extends AppCompatActivity
   private List<Image> imageList;
   private ImageSelectAdapter imageSelectAdapter;
   private Album album;
+  private TextView selectAllTextView;
+  private ImageView doneImageView;
 
   @Override
   protected void onCreate(Bundle savedInstanceState) {
@@ -33,8 +35,10 @@ public class SelectImageActivity extends AppCompatActivity
     setContentView(R.layout.activity_select_image);
 
     ImageView backImageView = (ImageView) findViewById(R.id.back_image_view);
-    ImageView doneImageView = (ImageView) findViewById(R.id.done_image_view);
+    doneImageView = (ImageView) findViewById(R.id.done_image_view);
     TextView titleTextView = (TextView) findViewById(R.id.title_text_view);
+    selectAllTextView = (TextView) findViewById(R.id.select_all_text_view);
+    selectAllTextView.setOnClickListener(this);
     backImageView.setOnClickListener(this);
     doneImageView.setOnClickListener(this);
 
@@ -52,6 +56,13 @@ public class SelectImageActivity extends AppCompatActivity
   @Override
   protected void onResume() {
     super.onResume();
+    if (Vangogh.selectedImageCount() > 0) {
+      doneImageView.setVisibility(View.VISIBLE);
+      selectAllTextView.setVisibility(View.VISIBLE);
+    } else {
+      doneImageView.setVisibility(View.INVISIBLE);
+      selectAllTextView.setVisibility(View.INVISIBLE);
+    }
     imageSelectAdapter.notifyDataSetChanged();
   }
 
@@ -66,6 +77,21 @@ public class SelectImageActivity extends AppCompatActivity
         setResult(RESULT_OK);
         this.finish();
         break;
+      case R.id.select_all_text_view:
+        switch (selectAllTextView.getText().toString()) {
+          case "取消全选":
+            Vangogh.getInstance().deselectAll(album);
+            selectAllTextView.setText("全选");
+            break;
+          case "全选":
+            boolean all = Vangogh.getInstance().selectAll(album);
+            if (all) {
+              selectAllTextView.setText("取消全选");
+            }
+            break;
+        }
+        imageSelectAdapter.notifyDataSetChanged();
+        break;
     }
   }
 
@@ -73,11 +99,18 @@ public class SelectImageActivity extends AppCompatActivity
   public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
     Image image = imageList.get(position);
     boolean result = Vangogh.getInstance().toggleSelect(album, image);
+    int selectedImageCount = Vangogh.selectedImageCount();
     if (result) {
+      if (selectedImageCount > 0) {
+        selectAllTextView.setVisibility(View.VISIBLE);
+        doneImageView.setVisibility(View.VISIBLE);
+      } else {
+        selectAllTextView.setVisibility(View.INVISIBLE);
+        doneImageView.setVisibility(View.INVISIBLE);
+      }
       imageSelectAdapter.notifyDataSetChanged();
     } else {
-      Toast.makeText(this, "最多只能选择" + Vangogh.selectedImageCount() + "张", Toast.LENGTH_SHORT)
-           .show();
+      Toast.makeText(this, "最多只能选择" + selectedImageCount + "张", Toast.LENGTH_SHORT).show();
     }
   }
 }

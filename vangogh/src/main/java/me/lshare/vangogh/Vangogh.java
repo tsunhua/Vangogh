@@ -320,18 +320,34 @@ public class Vangogh implements ImageSelector {
   }
 
   @Override
-  public void selectAll(Album album) {
-    album.setSelected(true);
-    for (Image img : allImageMap.get(album)) {
-      img.setSelected(true);
+  public boolean selectAll(Album alba) {
+    // check limit
+    int selectedImageCount = selectedImageCount();
+    if (selectedImageCount > filter.getLimit()) {
+      return false;
     }
+    Album album = getAlbum(alba.getId());
+    album.setSelected(true);
+    int countCanSelect = filter.getLimit() - selectedImageCount;
+    for (Image img : allImageMap.get(album)) {
+      if (countCanSelect <= 0) {
+        break;
+      }
+      if (!img.isSelected()) {
+        img.setSelected(true);
+        countCanSelect--;
+      }
+    }
+    return true;
   }
 
   @Override
-  public void deselectAll(Album album) {
+  public boolean deselectAll(Album alba) {
+    Album album = getAlbum(alba.getId());
     album.setSelected(false);
     for (Image img : allImageMap.get(album)) {
       img.setSelected(false);
     }
+    return true;
   }
 }
