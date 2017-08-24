@@ -41,7 +41,8 @@ public class SelectAlbumActivity extends AppCompatActivity
     albumSelectAdapter.notifyDataSetChanged();
     int selectedCount = Vangogh.selectedImageCount();
     if (selectedCount > 0) {
-      titletextview.setText("已选" + selectedCount + "张");
+      titletextview.setText(
+          "已选" + selectedCount + "张/限选" + Vangogh.getInstance().getSelectLimit() + "张");
       doneImageView.setVisibility(View.VISIBLE);
     } else {
       titletextview.setText("选择图片");

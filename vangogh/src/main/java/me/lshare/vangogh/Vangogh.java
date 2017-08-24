@@ -272,6 +272,10 @@ public class Vangogh implements ImageSelector {
     return result;
   }
 
+  public int getSelectLimit() {
+    return filter.getLimit();
+  }
+
   public static int selectedImageCount() {
     int count = 0;
     Set<Album> albumSet = allImageMap.keySet();
