@@ -60,9 +60,9 @@ public class Filter {
     private Set<MimeType> mimeTypeSet;
     private String nameRegex;
     private String path;
-    private long minSize;
-    private long maxSize;
-    private int limit;
+    private long minSize = 0L;
+    private long maxSize = Long.MAX_VALUE;
+    private int limit = Integer.MAX_VALUE;
 
     public Builder mimType(MimeType... mimeTypes) {
       this.mimeTypeSet = new HashSet<>(Arrays.asList(mimeTypes));

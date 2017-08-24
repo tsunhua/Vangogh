@@ -273,7 +273,11 @@ public class Vangogh implements ImageSelector {
   }
 
   public int getSelectLimit() {
-    return filter.getLimit();
+    int result = filter.getLimit();
+    if (filter.getLimit() == 0) {
+      result = Integer.MAX_VALUE;
+    }
+    return result;
   }
 
   public static int selectedImageCount() {
@@ -307,7 +311,7 @@ public class Vangogh implements ImageSelector {
       return false;
     }
     // check limit
-    if (!image.isSelected() && selectedImageCount() >= filter.getLimit()) {
+    if (!image.isSelected() && selectedImageCount() >= getSelectLimit()) {
       return false;
     }
 
@@ -338,11 +342,11 @@ public class Vangogh implements ImageSelector {
     }
     // check limit
     int selectedImageCount = selectedImageCount();
-    if (selectedImageCount > filter.getLimit()) {
+    if (selectedImageCount > getSelectLimit()) {
       return false;
     }
     album.setSelected(true);
-    int countCanSelect = filter.getLimit() - selectedImageCount;
+    int countCanSelect = getSelectLimit() - selectedImageCount;
     for (Image img : allImageMap.get(album)) {
       if (countCanSelect <= 0) {
         break;

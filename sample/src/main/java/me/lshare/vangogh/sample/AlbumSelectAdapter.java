@@ -51,7 +51,7 @@ public class AlbumSelectAdapter extends GenericAdapter<Album> {
     Picasso.with(context)
            .load(Uri.fromFile(new File(album.getCover())))
            .placeholder(R.drawable.image_placeholder)
-           .resize(200, 200)
+           .resize(400, 400)
            .centerCrop()
            .into(viewHolder.imageView);
 

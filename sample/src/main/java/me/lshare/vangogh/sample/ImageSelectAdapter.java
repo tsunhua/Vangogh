@@ -54,7 +54,7 @@ public class ImageSelectAdapter extends GenericAdapter<Image> {
     Picasso.with(context)
            .load(new File(image.getPath()))
            .placeholder(R.drawable.image_placeholder)
-           .resize(200, 200)
+           .resize(400, 400)
            .centerCrop()
            .into(viewHolder.imageView);
 
