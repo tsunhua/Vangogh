@@ -1,39 +1,32 @@
 package me.lshare.vangogh;
 
 import android.text.TextUtils;
-import android.view.TextureView;
 
-import java.io.File;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.regex.Pattern;
 
 public class Filter {
-
   private Set<MimeType> mimeTypeSet;
   private String nameRegex;
-  private String path;
+  private String pathContain;
   private long minSize;
   private long maxSize;
-  private int limit;
+  private int limitCount;
 
   private Filter(Set<MimeType> mimeTypeSet,
                  String nameRegex,
-                 String path,
+                 String pathContain,
                  long minSize,
                  long maxSize,
-                 int limit) {
+                 int limitCount) {
     this.mimeTypeSet = mimeTypeSet;
     this.nameRegex = nameRegex;
-    this.path = path;
+    this.pathContain = pathContain;
     this.minSize = minSize;
     this.maxSize = maxSize;
-    this.limit = limit;
-  }
-
-  public Set<MimeType> getMimeTypeSet() {
-    return mimeTypeSet;
+    this.limitCount = limitCount;
   }
 
   public boolean filterName(String name) {
@@ -44,25 +37,29 @@ public class Filter {
     return pattern.matcher(name).matches();
   }
 
-  public String getPath() {
-    return path;
-  }
-
   public boolean filterSize(long size) {
     return maxSize == 0 || size >= minSize && size <= maxSize;
   }
 
-  public int getLimit() {
-    return limit;
+  public String getPathContain() {
+    return pathContain;
+  }
+
+  public Set<MimeType> getMimeTypeSet() {
+    return mimeTypeSet;
+  }
+
+  public int getLimitCount() {
+    return limitCount;
   }
 
   public static class Builder {
     private Set<MimeType> mimeTypeSet;
     private String nameRegex;
-    private String path;
+    private String pathContain;
     private long minSize = 0L;
     private long maxSize = Long.MAX_VALUE;
-    private int limit = Integer.MAX_VALUE;
+    private int limitCount = Integer.MAX_VALUE;
 
     public Builder mimType(MimeType... mimeTypes) {
       this.mimeTypeSet = new HashSet<>(Arrays.asList(mimeTypes));
@@ -74,8 +71,8 @@ public class Filter {
       return this;
     }
 
-    public Builder path(String path) {
-      this.path = path;
+    public Builder pathContain(String pathContain) {
+      this.pathContain = pathContain;
       return this;
     }
 
@@ -88,16 +85,16 @@ public class Filter {
       return this;
     }
 
-    public Builder limit(int limit) {
+    public Builder limitCount(int limit) {
       if (limit <= 0) {
-        throw new IllegalArgumentException("limit should >=0");
+        throw new IllegalArgumentException("limitCount should >=0");
       }
-      this.limit = limit;
+      this.limitCount = limit;
       return this;
     }
 
     public Filter build() {
-      return new Filter(mimeTypeSet, nameRegex, path, minSize, maxSize, limit);
+      return new Filter(mimeTypeSet, nameRegex, pathContain, minSize, maxSize, limitCount);
     }
   }
 }

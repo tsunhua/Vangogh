@@ -84,8 +84,8 @@ public class MainActivity extends AppCompatActivity {
   private void initVangogh() {
     Filter filter = new Filter.Builder().mimType(MimeType.JPEG)
                                         /*.nameRegex(".*wx_camera.*")*/
-                                        /*.limit(3)*/
-                                        /*.path("/tencent/MicroMsg/WeiXin")*/.build();
+                                        /*.limitCount(3)*/
+                                        /*.pathContain("/tencent/MicroMsg/WeiXin")*/.build();
     Vangogh.create(filter).init(this);
   }
 

@@ -53,14 +53,14 @@ public class Vangogh implements ImageSelector {
       i++;
     }
 
-    // filter path
-    if (filter.getPath() != null) {
+    // filter pathContain
+    if (filter.getPathContain() != null) {
       sb.append(" AND ")
         .append(MediaStore.Images.Media.DATA)
         .append(" like ")
         .append("'")
         .append("%")
-        .append(filter.getPath())
+        .append(filter.getPathContain())
         .append("%")
         .append("'");
     }
@@ -223,8 +223,8 @@ public class Vangogh implements ImageSelector {
   }
 
   public int getSelectLimit() {
-    int result = filter.getLimit();
-    if (filter.getLimit() == 0) {
+    int result = filter.getLimitCount();
+    if (filter.getLimitCount() == 0) {
       result = Integer.MAX_VALUE;
     }
     return result;
@@ -256,24 +256,12 @@ public class Vangogh implements ImageSelector {
 
   // selector
   @Override
-  public boolean selectNone() {
-    Set<Album> albumSet = allImageMap.keySet();
-    for (Album album : albumSet) {
-      album.setSelected(false);
-      for (Image image : allImageMap.get(album)) {
-        image.setSelected(false);
-      }
-    }
-    return true;
-  }
-
-  @Override
   public boolean toggleSelect(Album alba, Image image) {
     Album album = getAlbum(alba.getId());
     if (album == null) {
       return false;
     }
-    // check limit
+    // check limitCount
     if (!image.isSelected() && selectedImageCount() >= getSelectLimit()) {
       return false;
     }
@@ -303,7 +291,7 @@ public class Vangogh implements ImageSelector {
     if (album == null) {
       return false;
     }
-    // check limit
+    // check limitCount
     int selectedImageCount = selectedImageCount();
     if (selectedImageCount > getSelectLimit()) {
       return false;
@@ -331,6 +319,18 @@ public class Vangogh implements ImageSelector {
     album.setSelected(false);
     for (Image img : allImageMap.get(album)) {
       img.setSelected(false);
+    }
+    return true;
+  }
+
+  @Override
+  public boolean selectNone() {
+    Set<Album> albumSet = allImageMap.keySet();
+    for (Album album : albumSet) {
+      album.setSelected(false);
+      for (Image image : allImageMap.get(album)) {
+        image.setSelected(false);
+      }
     }
     return true;
   }
