@@ -203,24 +203,30 @@ public class Vangogh implements ImageSelector {
     return imageList == null ? new ArrayList<Image>() : imageList;
   }
 
-  public static Map<Album, List<Image>> selectedImageMap() {
-    Map<Album, List<Image>> result = new HashMap<>();
-    Set<Album> albumSet = allImageMap.keySet();
-    for (Album album : albumSet) {
-      if (album.isSelected()) {
-        List<Image> imageList = new ArrayList<>();
-        for (Image image : allImageMap.get(album)) {
-          if (image.isSelected()) {
-            imageList.add(image);
-          }
-        }
-        if (!imageList.isEmpty()) {
-          result.put(album, imageList);
+  public static List<Image> selectedImageList(Album album) {
+    List<Image> result = new ArrayList<>();
+    if (album.isSelected()) {
+      for (Image image : allImageMap.get(album)) {
+        if (image.isSelected()) {
+          result.add(image);
         }
       }
     }
     return result;
   }
+
+//  public static Map<Album, List<Image>> selectedImageMap() {
+//    Map<Album, List<Image>> result = new HashMap<>();
+//    for (Album album : albumList()) {
+//      if (album.isSelected()) {
+//        List<Image> imageList = selectedImageList(album);
+//        if (!imageList.isEmpty()) {
+//          result.put(album, imageList);
+//        }
+//      }
+//    }
+//    return result;
+//  }
 
   public int getSelectLimit() {
     int result = filter.getLimitCount();

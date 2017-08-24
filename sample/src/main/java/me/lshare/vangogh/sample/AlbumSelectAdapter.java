@@ -43,7 +43,7 @@ public class AlbumSelectAdapter extends GenericAdapter<Album> {
     Album album = arrayList.get(position);
     if (album.isSelected()) {
       viewHolder.textView.setText(
-          album.getName() + "(" + Vangogh.selectedImageMap().get(album).size() + "/" +
+          album.getName() + "(" + Vangogh.selectedImageList(album).size() + "/" +
           Vangogh.imageList(album).size() + ")");
     } else {
       viewHolder.textView.setText(album.getName());
