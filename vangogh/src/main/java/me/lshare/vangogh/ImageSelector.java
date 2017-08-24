@@ -6,4 +6,6 @@ public interface ImageSelector {
   boolean selectAll(Album album);
 
   boolean deselectAll(Album album);
+
+  boolean selectNone();
 }

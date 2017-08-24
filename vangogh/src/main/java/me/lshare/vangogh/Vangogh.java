@@ -2,10 +2,7 @@ package me.lshare.vangogh;
 
 import android.content.Context;
 import android.database.Cursor;
-import android.os.Handler;
-import android.os.Looper;
-import android.os.Message;
-import android.os.Process;
+import android.os.AsyncTask;
 import android.provider.MediaStore;
 import android.util.Log;
 
@@ -19,126 +16,83 @@ import java.util.Set;
 
 public class Vangogh implements ImageSelector {
   private static final String TAG = Vangogh.class.getSimpleName();
-  private Filter filter;
-  private static List<Album> tmpAlbumList;
   private static Map<Album, List<Image>> allImageMap;
-  private Handler handler;
-
-  private static final int MSG_IMAGE_LIST_DATA = 10001;
-
   private final String[] albumProjection = new String[] {
       MediaStore.Images.Media.BUCKET_ID, MediaStore.Images.Media.BUCKET_DISPLAY_NAME,
       MediaStore.Images.Media.DATA
   };
-
   private final String[] imgProjection = new String[] {
       MediaStore.Images.Media._ID, MediaStore.Images.Media.DISPLAY_NAME,
       MediaStore.Images.Media.SIZE, MediaStore.Images.Media.DATA
   };
+  private static Vangogh instance;
+
+  private Filter filter;
+  private final String where;
+  private int countDown;
 
   static {
-    tmpAlbumList = new ArrayList<>();
     allImageMap = new HashMap<>();
-    reset();
   }
 
-  private static Album getAlbum(long id) {
-    for (Album album : allImageMap.keySet()) {
-      if (album.getId() == id) {
-        return album;
-      }
-    }
-    return null;
+  public static Vangogh create(Filter filter) {
+    instance = new Vangogh(filter);
+    return instance;
   }
-
-  public static void selectNone() {
-    Set<Album> albumSet = allImageMap.keySet();
-    for (Album album : albumSet) {
-      album.setSelected(false);
-      for (Image image : allImageMap.get(album)) {
-        image.setSelected(false);
-      }
-    }
-  }
-
-  private StringBuilder where;
 
   private Vangogh(Filter filter) {
     this.filter = filter;
-    this.handler = new Handler(Looper.getMainLooper()) {
-      @Override
-      public void handleMessage(Message msg) {
-        super.handleMessage(msg);
-        switch (msg.what) {
-          case MSG_IMAGE_LIST_DATA:
-            Log.d(TAG, "image list data loaded: " + allImageMap.size());
-            Set<Album> alba = allImageMap.keySet();
-            for (Album album : alba) {
-              Log.d(TAG, "" + allImageMap.get(album).toString());
-            }
-            break;
-          default:
-            break;
-        }
-      }
-    };
     // filter mimType
-    where = new StringBuilder();
+    StringBuilder sb = new StringBuilder();
     int i = 0;
     for (MimeType mimType : filter.getMimeTypeSet()) {
-      where.append(MediaStore.Images.Media.MIME_TYPE + "=").append("'").append(mimType).append("'");
+      sb.append(MediaStore.Images.Media.MIME_TYPE + "=").append("'").append(mimType).append("'");
       if (i != filter.getMimeTypeSet().size() - 1) {
-        where.append(" OR ");
+        sb.append(" OR ");
       }
       i++;
     }
 
     // filter path
     if (filter.getPath() != null) {
-      where.append(" AND ")
-           .append(MediaStore.Images.Media.DATA)
-           .append(" like ")
-           .append("'")
-           .append("%")
-           .append(filter.getPath())
-           .append("%")
-           .append("'");
+      sb.append(" AND ")
+        .append(MediaStore.Images.Media.DATA)
+        .append(" like ")
+        .append("'")
+        .append("%")
+        .append(filter.getPath())
+        .append("%")
+        .append("'");
     }
-  }
-
-  private static void reset() {
-    allImageMap.clear();
-    tmpAlbumList.clear();
-    selectNone();
+    where = sb.toString();
   }
 
   public void init(final Context context) {
-    reset();
-    new Thread() {
+    new AsyncTask<Void, Void, List<Album>>() {
       @Override
-      public void run() {
-        Process.setThreadPriority(Process.THREAD_PRIORITY_BACKGROUND);
+      protected void onPreExecute() {
+        super.onPreExecute();
+        reset();
+      }
+
+      @Override
+      protected List<Album> doInBackground(Void... params) {
         Cursor cursor = context.getApplicationContext()
                                .getContentResolver()
                                .query(MediaStore.Images.Media.EXTERNAL_CONTENT_URI,
                                       albumProjection,
-                                      where.toString(),
+                                      where,
                                       null,
                                       MediaStore.Images.Media.DATE_ADDED);
         if (cursor == null) {
-          // error
-          return;
+          return null;
         }
 
-        ArrayList<Album> temp = new ArrayList<>(cursor.getCount());
+        List<Album> temp = new ArrayList<>(cursor.getCount());
         HashSet<Long> albumSet = new HashSet<>();
         File file;
         if (cursor.moveToLast()) {
           do {
-            if (Thread.interrupted()) {
-              return;
-            }
-
             long albumId = cursor.getLong(cursor.getColumnIndex(albumProjection[0]));
             String album = cursor.getString(cursor.getColumnIndex(albumProjection[1]));
             String image = cursor.getString(cursor.getColumnIndex(albumProjection[2]));
@@ -160,45 +114,37 @@ public class Vangogh implements ImageSelector {
           } while (cursor.moveToPrevious());
         }
         cursor.close();
-        tmpAlbumList.clear();
-        tmpAlbumList.addAll(temp);
+        return temp;
+      }
 
-        countDown = tmpAlbumList.size();
-        for (Album album : tmpAlbumList) {
+      @Override
+      protected void onPostExecute(List<Album> alba) {
+        countDown = alba.size();
+        for (Album album : alba) {
           loadImageList(context, album);
         }
       }
-    }.start();
+    }.execute();
   }
 
-  private int countDown;
-
   private void loadImageList(final Context context, final Album album) {
-    new Thread() {
+    new AsyncTask<Album, Void, List<Image>>() {
       @Override
-      public void run() {
-        Process.setThreadPriority(Process.THREAD_PRIORITY_BACKGROUND);
-        super.run();
+      protected List<Image> doInBackground(Album... params) {
         File file;
         Cursor cursor = context.getContentResolver()
                                .query(MediaStore.Images.Media.EXTERNAL_CONTENT_URI,
                                       imgProjection,
-                                      where.toString() + " AND " +
+                                      where + " AND " +
                                       MediaStore.Images.Media.BUCKET_DISPLAY_NAME + " =?",
                                       new String[] {album.getName()},
                                       MediaStore.Images.Media.DATE_ADDED);
         if (cursor == null) {
-          // error
-          return;
+          return null;
         }
-
         ArrayList<Image> temp = new ArrayList<>();
         if (cursor.moveToLast()) {
           do {
-            if (Thread.interrupted()) {
-              return;
-            }
-
             long id = cursor.getLong(cursor.getColumnIndex(imgProjection[0]));
 
             // filter name
@@ -222,24 +168,34 @@ public class Vangogh implements ImageSelector {
           } while (cursor.moveToPrevious());
         }
         cursor.close();
+        return temp;
+      }
 
-        if (!temp.isEmpty()) {
-          allImageMap.put(album, temp);
-        }
-        synchronized (Vangogh.class) {
+      @Override
+      protected void onPostExecute(List<Image> imageList) {
+        if (imageList != null && !imageList.isEmpty()) {
+          allImageMap.put(album, imageList);
           countDown--;
           if (countDown == 0) {
-            handler.sendEmptyMessage(MSG_IMAGE_LIST_DATA);
+            // load finish
+            Log.d(TAG, "load image finish, album count: " + allImageMap.keySet().size());
           }
         }
       }
-    }.start();
+    }.execute(album);
   }
 
-  private static Vangogh instance;
+  private void reset() {
+    allImageMap.clear();
+  }
 
+  // getter
   public static Vangogh getInstance() {
     return instance;
+  }
+
+  public static List<Album> albumList() {
+    return new ArrayList<>(allImageMap.keySet());
   }
 
   public static List<Image> imageList(Album album) {
@@ -289,13 +245,26 @@ public class Vangogh implements ImageSelector {
     return count;
   }
 
-  public static List<Album> albumList() {
-    return new ArrayList<>(allImageMap.keySet());
+  private static Album getAlbum(long id) {
+    for (Album album : allImageMap.keySet()) {
+      if (album.getId() == id) {
+        return album;
+      }
+    }
+    return null;
   }
 
-  public static Vangogh create(Filter filter) {
-    instance = new Vangogh(filter);
-    return instance;
+  // selector
+  @Override
+  public boolean selectNone() {
+    Set<Album> albumSet = allImageMap.keySet();
+    for (Album album : albumSet) {
+      album.setSelected(false);
+      for (Image image : allImageMap.get(album)) {
+        image.setSelected(false);
+      }
+    }
+    return true;
   }
 
   @Override

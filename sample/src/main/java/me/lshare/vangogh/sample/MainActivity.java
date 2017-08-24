@@ -3,8 +3,13 @@ package me.lshare.vangogh.sample;
 import android.Manifest;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.database.ContentObserver;
+import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
+import android.provider.MediaStore;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
@@ -24,11 +29,28 @@ public class MainActivity extends AppCompatActivity {
 
   private static final String TAG = MainActivity.class.getSimpleName();
   private static final int REQUEST_PERMISSION_STORAGE = 1001;
+  ContentObserver contentObserver;
 
   @Override
   protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
     setContentView(R.layout.activity_main);
+    contentObserver = new ContentObserver(new Handler(Looper.getMainLooper())) {
+      @Override
+      public void onChange(boolean selfChange, Uri uri) {
+        super.onChange(selfChange, uri);
+        initVangogh();
+      }
+    };
+    getContentResolver().registerContentObserver(MediaStore.Images.Media.EXTERNAL_CONTENT_URI,
+                                                 true,
+                                                 contentObserver);
+  }
+
+  @Override
+  protected void onDestroy() {
+    super.onDestroy();
+    getContentResolver().unregisterContentObserver(contentObserver);
   }
 
   public void onClickInit(View view) {
@@ -63,8 +85,7 @@ public class MainActivity extends AppCompatActivity {
     Filter filter = new Filter.Builder().mimType(MimeType.JPEG)
                                         /*.nameRegex(".*wx_camera.*")*/
                                         /*.limit(3)*/
-                                        /*.path("/tencent/MicroMsg/WeiXin")*/
-                                        .build();
+                                        /*.path("/tencent/MicroMsg/WeiXin")*/.build();
     Vangogh.create(filter).init(this);
   }
 
@@ -95,6 +116,6 @@ public class MainActivity extends AppCompatActivity {
         Log.i(TAG, "cancel select");
         break;
     }
-    Vangogh.selectNone();
+    Vangogh.getInstance().selectNone();
   }
 }
