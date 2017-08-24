@@ -24,7 +24,6 @@
       android:layout_centerVertical="true"
       android:layout_marginLeft="10dp"
       android:layout_toRightOf="@id/back_image_view"
-      android:text="xxx"
       android:textColor="@color/multiple_image_select_toolbarPrimaryText"
       android:textSize="18sp"/>
 
@@ -43,7 +42,6 @@
       android:layout_height="wrap_content"
       android:layout_centerVertical="true"
       android:layout_toLeftOf="@id/done_image_view"
-      android:text="全选"
       android:textColor="@color/multiple_image_select_toolbarPrimaryText"
       android:textSize="16sp"/>
 

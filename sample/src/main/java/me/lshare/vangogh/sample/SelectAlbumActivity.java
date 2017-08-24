@@ -41,13 +41,14 @@ public class SelectAlbumActivity extends AppCompatActivity
     albumSelectAdapter.notifyDataSetChanged();
     int selectedCount = Vangogh.selectedImageCount();
     if (selectedCount > 0) {
-      titletextview.setText("已选" + selectedCount + "张");
+      titletextview.setText(getString(R.string.has_selected, selectedCount));
       if (Vangogh.getInstance().getSelectLimit() != Integer.MAX_VALUE) {
-        titletextview.append("/限选" + Vangogh.getInstance().getSelectLimit() + "张");
+        titletextview.append(getString(R.string.limit_select,
+                                       Vangogh.getInstance().getSelectLimit()));
       }
       doneImageView.setVisibility(View.VISIBLE);
     } else {
-      titletextview.setText("选择图片");
+      titletextview.setText(R.string.select_image);
       doneImageView.setVisibility(View.INVISIBLE);
     }
   }

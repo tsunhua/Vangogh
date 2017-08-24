@@ -25,7 +25,7 @@
     android:layout_height="wrap_content"
     android:layout_gravity="center"
     android:onClick="onClickInit"
-    android:text="初始化"/>
+    android:text="@string/init"/>
 
   <Button
     android:id="@+id/select_album_button"
@@ -33,7 +33,7 @@
     android:layout_height="wrap_content"
     android:layout_gravity="center"
     android:onClick="onClickSelectAlbum"
-    android:text="选取相册"/>
+    android:text="@string/select_album"/>
 
   <Button
     android:id="@+id/select_image_button"
@@ -41,5 +41,5 @@
     android:layout_height="wrap_content"
     android:layout_gravity="center"
     android:onClick="onClickSelectImage"
-    android:text="选取Camera文件夹的图片"/>
+    android:text="@string/select_album_dcim"/>
 </LinearLayout>

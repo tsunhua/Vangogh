@@ -75,7 +75,8 @@ public class MainActivity extends AppCompatActivity {
       if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
         initVangogh();
       } else {
-        Toast.makeText(this, "读取外存权限未被授予", Toast.LENGTH_SHORT).show();
+        Toast.makeText(this, R.string.external_storage_permission_denied, Toast.LENGTH_SHORT)
+             .show();
         findViewById(R.id.select_image_button).setEnabled(false);
       }
     }
@@ -97,7 +98,7 @@ public class MainActivity extends AppCompatActivity {
     Intent intent = new Intent(this, SelectImageActivity.class);
     List<Album> alba = Vangogh.albumList();
     for (Album album : alba) {
-      if (album.getName().contains("Camera")) {
+      if (album.getName().equalsIgnoreCase("DCIM")) {
         intent.putExtra(SelectImageActivity.EXTRA_ALBUM, album);
         startActivityForResult(intent, 1);
         break;

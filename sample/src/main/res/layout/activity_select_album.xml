@@ -24,7 +24,7 @@
       android:layout_centerVertical="true"
       android:layout_marginLeft="10dp"
       android:layout_toRightOf="@id/back_image_view"
-      android:text="选择图片"
+      android:text="@string/select_image"
       android:textColor="@color/multiple_image_select_toolbarPrimaryText"
       android:textSize="18sp"/>
 
