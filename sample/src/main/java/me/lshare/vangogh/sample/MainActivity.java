@@ -13,6 +13,9 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Toast;
 
+import java.util.List;
+
+import me.lshare.vangogh.Album;
 import me.lshare.vangogh.Filter;
 import me.lshare.vangogh.MimeType;
 import me.lshare.vangogh.Vangogh;
@@ -62,8 +65,20 @@ public class MainActivity extends AppCompatActivity {
     Vangogh.create(filter).bind(this).init();
   }
 
-  public void onClickSelectImage(View view) {
+  public void onClickSelectAlbum(View view) {
     startActivityForResult(new Intent(this, SelectAlbumActivity.class), 0);
+  }
+
+  public void onClickSelectImage(View view) {
+    Intent intent = new Intent(this, SelectImageActivity.class);
+    List<Album> alba = Vangogh.albumList();
+    for (Album album : alba) {
+      if (album.getName().contains("Camera")) {
+        intent.putExtra(SelectImageActivity.EXTRA_ALBUM, album);
+        startActivityForResult(intent, 1);
+        break;
+      }
+    }
   }
 
   @Override

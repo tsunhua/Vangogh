@@ -42,7 +42,7 @@ public class Vangogh implements ImageSelector {
   static {
     tmpAlbumList = new ArrayList<>();
     allImageMap = new HashMap<>();
-    selectNone();
+    reset();
   }
 
   private static Album getAlbum(long id) {
@@ -110,10 +110,14 @@ public class Vangogh implements ImageSelector {
     }
   }
 
-  public void init() {
+  private static void reset() {
     allImageMap.clear();
     tmpAlbumList.clear();
     selectNone();
+  }
+
+  public void init() {
+    reset();
     new Thread() {
       @Override
       public void run() {
@@ -295,6 +299,9 @@ public class Vangogh implements ImageSelector {
   @Override
   public boolean toggleSelect(Album alba, Image image) {
     Album album = getAlbum(alba.getId());
+    if (album == null) {
+      return false;
+    }
     // check limit
     if (!image.isSelected() && selectedImageCount() >= filter.getLimit()) {
       return false;
@@ -321,12 +328,15 @@ public class Vangogh implements ImageSelector {
 
   @Override
   public boolean selectAll(Album alba) {
+    Album album = getAlbum(alba.getId());
+    if (album == null) {
+      return false;
+    }
     // check limit
     int selectedImageCount = selectedImageCount();
     if (selectedImageCount > filter.getLimit()) {
       return false;
     }
-    Album album = getAlbum(alba.getId());
     album.setSelected(true);
     int countCanSelect = filter.getLimit() - selectedImageCount;
     for (Image img : allImageMap.get(album)) {
@@ -344,6 +354,9 @@ public class Vangogh implements ImageSelector {
   @Override
   public boolean deselectAll(Album alba) {
     Album album = getAlbum(alba.getId());
+    if (album == null) {
+      return false;
+    }
     album.setSelected(false);
     for (Image img : allImageMap.get(album)) {
       img.setSelected(false);

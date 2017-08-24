@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-  android:layout_width="match_parent"
-  android:layout_height="match_parent"
-  android:orientation="vertical">
+              android:layout_width="match_parent"
+              android:layout_height="match_parent"
+              android:orientation="vertical">
 
   <RelativeLayout
     android:layout_width="match_parent"
@@ -28,10 +28,18 @@
     android:text="初始化"/>
 
   <Button
+    android:id="@+id/select_album_button"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:layout_gravity="center"
+    android:onClick="onClickSelectAlbum"
+    android:text="选取相册"/>
+
+  <Button
     android:id="@+id/select_image_button"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
     android:layout_gravity="center"
     android:onClick="onClickSelectImage"
-    android:text="选取图片"/>
+    android:text="选取Camera文件夹的图片"/>
 </LinearLayout>
