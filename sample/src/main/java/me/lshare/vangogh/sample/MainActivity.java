@@ -16,12 +16,16 @@ import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 import me.lshare.vangogh.Album;
 import me.lshare.vangogh.Filter;
+import me.lshare.vangogh.Image;
 import me.lshare.vangogh.MimeType;
 import me.lshare.vangogh.Vangogh;
 
@@ -30,11 +34,13 @@ public class MainActivity extends AppCompatActivity {
   private static final String TAG = MainActivity.class.getSimpleName();
   private static final int REQUEST_PERMISSION_STORAGE = 1001;
   ContentObserver contentObserver;
+  private TextView resultTextView;
 
   @Override
   protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
     setContentView(R.layout.activity_main);
+    resultTextView = (TextView) findViewById(R.id.result_text_view);
     contentObserver = new ContentObserver(new Handler(Looper.getMainLooper())) {
       @Override
       public void onChange(boolean selfChange, Uri uri) {
@@ -111,10 +117,19 @@ public class MainActivity extends AppCompatActivity {
     super.onActivityResult(requestCode, resultCode, data);
     switch (resultCode) {
       case RESULT_OK:
-        Log.i(TAG, "selected image count: " + Vangogh.selectedImageCount());
+        Map<Album, List<Image>> albumListMap = Vangogh.selectedImageMap();
+        Set<Album> alba = albumListMap.keySet();
+        resultTextView.setText(R.string.result_success);
+        for (Album album : alba) {
+          resultTextView.append("\n\nalbum: " + album.getName());
+          List<Image> imageList = albumListMap.get(album);
+          for (Image image : imageList) {
+            resultTextView.append("\n\t" + image.getPath());
+          }
+        }
         break;
       case RESULT_CANCELED:
-        Log.i(TAG, "cancel select");
+        resultTextView.setText(R.string.result_cancel);
         break;
     }
     Vangogh.getInstance().selectNone();

@@ -7,4 +7,6 @@
   <string name="init">Init</string>
   <string name="select_album">Select Album</string>
   <string name="select_album_camera">Select Image in folder Camera</string>
+  <string name="result_success">Result: SUCCESS</string>
+  <string name="result_cancel">Result: CANCEL</string>
 </resources>

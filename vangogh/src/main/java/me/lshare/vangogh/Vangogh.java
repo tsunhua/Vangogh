@@ -215,18 +215,18 @@ public class Vangogh implements ImageSelector {
     return result;
   }
 
-//  public static Map<Album, List<Image>> selectedImageMap() {
-//    Map<Album, List<Image>> result = new HashMap<>();
-//    for (Album album : albumList()) {
-//      if (album.isSelected()) {
-//        List<Image> imageList = selectedImageList(album);
-//        if (!imageList.isEmpty()) {
-//          result.put(album, imageList);
-//        }
-//      }
-//    }
-//    return result;
-//  }
+  public static Map<Album, List<Image>> selectedImageMap() {
+    Map<Album, List<Image>> result = new HashMap<>();
+    for (Album album : albumList()) {
+      if (album.isSelected()) {
+        List<Image> imageList = selectedImageList(album);
+        if (!imageList.isEmpty()) {
+          result.put(album, imageList);
+        }
+      }
+    }
+    return result;
+  }
 
   public int getSelectLimit() {
     int result = filter.getLimitCount();
