@@ -65,7 +65,7 @@ public class MainActivity extends AppCompatActivity {
                                         /*.limit(3)*/
                                         /*.path("/storage/emulated/0/tencent/MicroMsg/WeiXin")*/
                                         .build();
-    Vangogh.create(filter).bind(this).init();
+    Vangogh.create(filter).init(this);
   }
 
   public void onClickSelectAlbum(View view) {

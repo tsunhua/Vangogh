@@ -1,8 +1,7 @@
 package me.lshare.vangogh;
 
-import android.app.Activity;
+import android.content.Context;
 import android.database.Cursor;
-import android.net.Uri;
 import android.os.Handler;
 import android.os.Looper;
 import android.os.Message;
@@ -11,7 +10,6 @@ import android.provider.MediaStore;
 import android.util.Log;
 
 import java.io.File;
-import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -22,7 +20,6 @@ import java.util.Set;
 public class Vangogh implements ImageSelector {
   private static final String TAG = Vangogh.class.getSimpleName();
   private Filter filter;
-  private WeakReference<Activity> contextReference;
   private static List<Album> tmpAlbumList;
   private static Map<Album, List<Image>> allImageMap;
   private Handler handler;
@@ -65,11 +62,6 @@ public class Vangogh implements ImageSelector {
   }
 
   private StringBuilder where;
-
-  public Vangogh bind(Activity context) {
-    this.contextReference = new WeakReference<>(context);
-    return this;
-  }
 
   private Vangogh(Filter filter) {
     this.filter = filter;
@@ -119,20 +111,19 @@ public class Vangogh implements ImageSelector {
     selectNone();
   }
 
-  public void init() {
+  public void init(final Context context) {
     reset();
     new Thread() {
       @Override
       public void run() {
         Process.setThreadPriority(Process.THREAD_PRIORITY_BACKGROUND);
-        Cursor cursor = contextReference.get()
-                                        .getApplicationContext()
-                                        .getContentResolver()
-                                        .query(MediaStore.Images.Media.EXTERNAL_CONTENT_URI,
-                                               albumProjection,
-                                               where.toString(),
-                                               null,
-                                               MediaStore.Images.Media.DATE_ADDED);
+        Cursor cursor = context.getApplicationContext()
+                               .getContentResolver()
+                               .query(MediaStore.Images.Media.EXTERNAL_CONTENT_URI,
+                                      albumProjection,
+                                      where.toString(),
+                                      null,
+                                      MediaStore.Images.Media.DATE_ADDED);
         if (cursor == null) {
           // error
           return;
@@ -173,7 +164,7 @@ public class Vangogh implements ImageSelector {
 
         countDown = tmpAlbumList.size();
         for (Album album : tmpAlbumList) {
-          loadImageList(album);
+          loadImageList(context, album);
         }
       }
     }.start();
@@ -181,21 +172,20 @@ public class Vangogh implements ImageSelector {
 
   private int countDown;
 
-  private void loadImageList(final Album album) {
+  private void loadImageList(final Context context, final Album album) {
     new Thread() {
       @Override
       public void run() {
         Process.setThreadPriority(Process.THREAD_PRIORITY_BACKGROUND);
         super.run();
         File file;
-        Cursor cursor = contextReference.get()
-                                        .getContentResolver()
-                                        .query(MediaStore.Images.Media.EXTERNAL_CONTENT_URI,
-                                               imgProjection,
-                                               where.toString() + " AND " +
-                                               MediaStore.Images.Media.BUCKET_DISPLAY_NAME + " =?",
-                                               new String[] {album.getName()},
-                                               MediaStore.Images.Media.DATE_ADDED);
+        Cursor cursor = context.getContentResolver()
+                               .query(MediaStore.Images.Media.EXTERNAL_CONTENT_URI,
+                                      imgProjection,
+                                      where.toString() + " AND " +
+                                      MediaStore.Images.Media.BUCKET_DISPLAY_NAME + " =?",
+                                      new String[] {album.getName()},
+                                      MediaStore.Images.Media.DATE_ADDED);
         if (cursor == null) {
           // error
           return;
