@@ -41,5 +41,5 @@
     android:layout_height="wrap_content"
     android:layout_gravity="center"
     android:onClick="onClickSelectImage"
-    android:text="@string/select_album_dcim"/>
+    android:text="@string/select_album_camera"/>
 </LinearLayout>

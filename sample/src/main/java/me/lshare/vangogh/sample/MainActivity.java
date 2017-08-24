@@ -98,7 +98,7 @@ public class MainActivity extends AppCompatActivity {
     Intent intent = new Intent(this, SelectImageActivity.class);
     List<Album> alba = Vangogh.albumList();
     for (Album album : alba) {
-      if (album.getName().equalsIgnoreCase("DCIM")) {
+      if (album.getName().equalsIgnoreCase("Camera")) {
         intent.putExtra(SelectImageActivity.EXTRA_ALBUM, album);
         startActivityForResult(intent, 1);
         break;

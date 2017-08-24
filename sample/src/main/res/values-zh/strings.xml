@@ -7,5 +7,5 @@
   <string name="external_storage_permission_denied">读取外存权限未被授予</string>
   <string name="init">初始化</string>
   <string name="select_album">选择相册</string>
-  <string name="select_album_dcim">选择DCIM文件夹的图片</string>
+  <string name="select_album_camera">选择Camera文件夹的图片</string>
 </resources>
