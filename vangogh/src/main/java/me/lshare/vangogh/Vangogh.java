@@ -64,7 +64,6 @@ public class Vangogh implements ImageSelector {
     }
   }
 
-  private Uri uri;
   private StringBuilder where;
 
   public Vangogh bind(Activity context) {
@@ -104,9 +103,13 @@ public class Vangogh implements ImageSelector {
 
     // filter path
     if (filter.getPath() != null) {
-      uri = Uri.fromFile(new File(filter.getPath()));
-    } else {
-      uri = MediaStore.Images.Media.EXTERNAL_CONTENT_URI;
+      where.append(" AND ")
+           .append(MediaStore.Images.Media.DATA)
+           .append(" like ")
+           .append("'")
+           .append(filter.getPath())
+           .append("%")
+           .append("'");
     }
   }
 
@@ -125,7 +128,7 @@ public class Vangogh implements ImageSelector {
         Cursor cursor = contextReference.get()
                                         .getApplicationContext()
                                         .getContentResolver()
-                                        .query(uri,
+                                        .query(MediaStore.Images.Media.EXTERNAL_CONTENT_URI,
                                                albumProjection,
                                                where.toString(),
                                                null,
@@ -187,7 +190,7 @@ public class Vangogh implements ImageSelector {
         File file;
         Cursor cursor = contextReference.get()
                                         .getContentResolver()
-                                        .query(uri,
+                                        .query(MediaStore.Images.Media.EXTERNAL_CONTENT_URI,
                                                imgProjection,
                                                where.toString() + " AND " +
                                                MediaStore.Images.Media.BUCKET_DISPLAY_NAME + " =?",
