@@ -46,6 +46,11 @@ Vangogh.getInstance().toggleSelect(album, image);
 ```java
 Map<Album, List<Image>> albumListMap = Vangogh.selectedImageMap();
 ```
+5. 清除所选
+
+```java
+Vangogh.selectNone();
+```
 
 ## 福利
 Sample包提供了额外的View实现和动态权限申请。

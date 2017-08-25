@@ -49,6 +49,12 @@ Vangogh.getInstance().toggleSelect(album, image);
 Map<Album, List<Image>> albumListMap = Vangogh.selectedImageMap();
 ```
 
+5. Clear selection
+
+```java
+Vangogh.selectNone();
+```
+
 ## Fuli
 In Sample Project, I provide the extra activity and adapter implementation. 
 
